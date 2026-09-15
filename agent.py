@@ -9,6 +9,9 @@ sandbox injects.
     INCLUDE="*.py"        python agent.py     # just the source
     INCLUDE="*"           python agent.py     # everything, including .env
     MODEL=custom/anthropic/claude-3.5-sonnet python agent.py
+
+The model to call comes from MODEL — set in the shell, or in the committed
+.env next to this file (shell wins).
 """
 
 from __future__ import annotations
@@ -18,10 +21,18 @@ import os
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
 from openai import OpenAI
 
+# Non-secret demo defaults (MODEL, INCLUDE, QUESTION) live in the .env beside
+# this script. Existing environment variables win, so the values a governed
+# Forge sandbox injects (OPENAI_BASE_URL, OPENAI_API_KEY) are never overridden.
+# The explicit path matters: repo/.env is demo *content* to be globbed, not
+# configuration to be loaded.
+load_dotenv(Path(__file__).with_name(".env"))
+
 REPO = Path(__file__).parent / "repo"
-MODEL = os.environ.get("MODEL", "custom/openai/gpt-4o-mini")
+MODEL = os.environ.get("MODEL", "gpt-4o-mini")
 INCLUDE = os.environ.get("INCLUDE", "*.py")
 QUESTION = os.environ.get(
     "QUESTION", "What does this service do, and what would you fix first?"
