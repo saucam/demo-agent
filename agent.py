@@ -8,7 +8,7 @@ sandbox injects.
 
     INCLUDE="*.py"        python agent.py     # just the source
     INCLUDE="*"           python agent.py     # everything, including .env
-    MODEL=openrouter/anthropic/claude-3.5-sonnet python agent.py
+    MODEL=custom/anthropic/claude-3.5-sonnet python agent.py
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ from pathlib import Path
 from openai import OpenAI
 
 REPO = Path(__file__).parent / "repo"
-MODEL = os.environ.get("MODEL", "gpt-4o-mini")
+MODEL = os.environ.get("MODEL", "custom/openai/gpt-4o-mini")
 INCLUDE = os.environ.get("INCLUDE", "*.py")
 QUESTION = os.environ.get(
     "QUESTION", "What does this service do, and what would you fix first?"
