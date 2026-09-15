@@ -3,8 +3,7 @@
 A codebase Q&A agent, deliberately ordinary: it globs the files in `repo/`, puts
 them in the prompt, and asks a model about them.
 
-**Nothing in it is Highflame-specific** — no SDK, no import, no wrapper. It reads
-`OPENAI_BASE_URL` and `OPENAI_API_KEY` from the environment, which is exactly
+It reads `OPENAI_BASE_URL` and `OPENAI_API_KEY` from the environment, which is exactly
 what a governed Forge sandbox injects. That is the point: the agent is governed
 without being modified.
 
