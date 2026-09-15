@@ -51,10 +51,20 @@ def main() -> int:
     # as a normal 200 whose content is the explanation — so a naive agent simply
     # prints a refusal instead of leaking, which is the point — while a
     # policy-aware client can also detect the decision explicitly.
-    raw = client.chat.completions.with_raw_response.create(
-        model=MODEL,
-        messages=[{"role": "user", "content": f"{context}\n\nQ: {QUESTION}"}],
-    )
+    try:
+        raw = client.chat.completions.with_raw_response.create(
+            model=MODEL,
+            messages=[{"role": "user", "content": f"{context}\n\nQ: {QUESTION}"}],
+        )
+    except Exception as exc:  # noqa: BLE001 - surface, do not crash
+        # NOT the guardrail path. A policy block is a 200; this is the gateway
+        # refusing the call outright — no provider connected, quota exhausted,
+        # an unknown model. Printed rather than raised because a traceback tells
+        # the operator nothing they can act on, and the gateway's own message
+        # usually does.
+        print(f"\n⚠️  the gateway refused this call\n   {exc}")
+        return 1
+
     decision = raw.headers.get("x-highflame-policy-decision")
     answer = raw.parse().choices[0].message.content or ""
 
